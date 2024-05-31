@@ -1,0 +1,8 @@
+public class Cohete {
+    private Player player;
+
+    public void jugadorEntro(){
+        //Escena.getNombreEscena();
+        System.out.println("Donde desea ir?");
+    }
+}
