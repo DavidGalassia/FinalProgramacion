@@ -1,0 +1,42 @@
+import java.util.Scanner;
+
+public class Main {
+
+    public static int menu(){
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("Bienvenido Jugador!");
+        System.out.println("Digite el numero de la opcion que desea elegir: ");
+        System.out.println("1. Iniciar nuevo juego ");
+        System.out.println("2. Salir del juego ");
+
+        try{
+            return input.nextInt();
+        }catch (Exception e){
+            return -1;
+        }
+    }
+
+    public static void main(String[] args) {
+        int eleccion = menu();
+
+        switch (eleccion){
+            case 1:
+                System.out.println("Ha elegido iniciar el juego");
+                Tutorial tutorial = new Tutorial();
+                new Ventana(600, 450, "Tutorial", tutorial);
+
+                break;
+
+            case 2:
+                System.out.println("Ha elegido salir del juego");
+
+                System.exit(0);
+
+                break;
+            default:
+                System.out.println("Eleccion no encontrada");
+                break;
+        }
+    }
+}
