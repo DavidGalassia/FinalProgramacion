@@ -1,0 +1,61 @@
+public class Player {
+    private int x, y;
+    private int water, food, life;
+    Planta planta = new Planta(this);
+
+    public Player(int x, int y) {
+        this.x = x;
+        this.y = y;
+        this.water = 5;
+        this.food = 5;
+        this.life = 10;
+    }
+
+    public void movimiento(int dx, int dy) {
+        this.x += dx;
+        this.y += dy;
+    }
+
+
+    public void recogioAgua() {
+        if (water != 10){
+            water++;
+        }
+    }
+
+    public void recogioComida() {
+        if (food != 10){
+            food++;
+        }
+    }
+
+    public void damagePlayer() {
+        if (life > 0){
+            life--;
+            if (life <= 0) life = 0;
+        }
+    }
+
+    public void reducirAguaYComida() {
+        if (water > 0) water--;
+        if (food > 0) food--;
+    }
+
+    public void actualizar() {
+        if (water == 10 && food == 10) {
+            life++;
+            if (life > 10) life = 10;
+        }
+
+        if (water == 0 || food == 0 || planta.getWater() == 0){
+            life--;
+            if (life < 0) life = 0;
+        }
+    }
+
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public int getWater() { return water; }
+    public int getFood() { return food; }
+    public int getLife() { return life; }
+}
