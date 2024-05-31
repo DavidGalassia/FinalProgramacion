@@ -1,0 +1,28 @@
+public class Planta {
+    private int water;
+    private Player player;
+
+    public Planta(Player player) {
+        this.player = player;
+        this.water = 10; // Inicialmente, la planta tiene 10 unidades de agua.
+    }
+
+    public void recogioAgua() {
+        if (water != 10){
+            water++;
+        }
+    }
+
+    public void reducirAgua() {
+        if (water > 0) {
+            water--;
+
+            if (water <= 0) water = 0;
+        }
+    }
+
+
+    public int getWater() {
+        return water;
+    }
+}
