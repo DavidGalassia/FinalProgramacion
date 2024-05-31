@@ -1,0 +1,175 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Scanner;
+
+public abstract class Escena extends JPanel {
+    private final int Ancho = 20;
+    private final int Altura = 15;
+    private final int sizeCelda = 30;
+    private final int ajusteTextoCeldaY = 23;
+    private final int ajusteTextoCeldaX = -5;
+
+    protected String[][] map = new String[Altura][Ancho];
+
+    protected Player player;
+    protected Planta planta;
+    protected HUD hud;
+    protected Timer timer;
+    protected Cohete cohete;
+
+    protected final String ASTRONAUTA = "\uD83D\uDC68\u200D\uD83D\uDE80";
+    protected final String COHETE = "\uD83D\uDE80";
+    protected final String AGUA = "\uD83D\uDCA7";
+    protected final String COMIDA = "\uD83E\uDD6A";
+    protected final String PEÑON = "\uD83E\uDEA8";
+    protected final String ESPACIO = "⬛";
+
+
+    public Escena() {
+
+        setFocusable(true);
+        addKeyListener(new KeyInput(this));
+
+        iniciarMapeado();
+
+        player = new Player(5, 5);
+        planta = new Planta(player);
+        hud = new HUD(player, planta);
+
+        // Configurar el temporizador para reducir comida y agua cada 30 segundos
+        timer = new Timer(30000, new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                player.reducirAguaYComida();
+                planta.reducirAgua();
+                actualizarMapa();
+                repaint();
+            }
+        });
+        timer.start();
+    }
+
+    abstract void iniciarMapeado();
+
+    public void actualizarMapa() {
+        Scanner input = new Scanner(System.in);
+        String currentCell = map[player.getY()][player.getX()];
+
+        if (currentCell.equals(COHETE)) {
+            System.out.println("Has encontrado un cohete!");
+            System.out.println("Que quieres hacer?");
+            System.out.println("1. Subir al cohete");
+            System.out.println("2. Explorar mas");
+            try {
+                int subirCohete = input.nextInt();
+
+                if (subirCohete == 1) cohete.jugadorEntro();
+
+
+            } catch (Exception e) {
+                System.out.println("Opcion no valida");
+            }
+
+
+        }
+
+        if (currentCell.equals(AGUA)) {
+
+            System.out.println("Has encontrado agua");
+            System.out.println("Puedes decidir si quieres darle agua a la planta o a ti mismo, " +
+                    "siendo que la planta es la que maneja la creacion de oxigeno en el traje");
+            System.out.println("Ahora decide, a quien quieres darle agua?");
+            System.out.println("1. A mi mismo");
+            System.out.println("2. A la planta");
+
+            try {
+                int receptorAgua = input.nextInt();
+
+                if (receptorAgua == 1) player.recogioAgua();
+                if (receptorAgua == 2) planta.recogioAgua();
+
+                if (receptorAgua != 1 && receptorAgua != 2)
+                    System.out.println("El agua se ha caido y derramado en el piso");
+
+            } catch (Exception e) {
+                System.out.println("El agua se ha caido y derramado en el piso");
+            }
+        }
+
+        if (currentCell.equals(COMIDA)) {
+            System.out.println("Has encontrado comida");
+            player.recogioComida();
+        }
+
+        if (currentCell.equals(PEÑON)) {
+            System.out.println("Has chocado contra una piedra!");
+            player.damagePlayer();
+        }
+
+        player.actualizar();
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        drawGrid(g);
+        dibujarPersonaje(g);
+        hud.draw(g);
+    }
+
+    protected void drawGrid(Graphics g) {
+
+        g.setFont(new Font("Segoe UI Emoji", Font.PLAIN, sizeCelda));
+
+        for (int y = 0; y < Altura; y++) {
+            for (int x = 0; x < Ancho; x++) {
+                String cell = map[y][x];
+
+                g.setColor(Color.LIGHT_GRAY);
+                g.fillRect(x * sizeCelda, y * sizeCelda, sizeCelda, sizeCelda);
+
+                switch (cell) {
+                    case AGUA -> {
+                        g.setColor(Color.BLUE);
+                        g.drawString(AGUA, x * sizeCelda + ajusteTextoCeldaX, y * sizeCelda + ajusteTextoCeldaY);
+                    }
+                    case COMIDA -> {
+                        g.setColor(Color.GREEN);
+                        g.drawString(COMIDA, x * sizeCelda + ajusteTextoCeldaX, y * sizeCelda + ajusteTextoCeldaY);
+                    }
+                    case COHETE -> {
+                        g.setColor(Color.BLACK);
+                        g.drawString(COHETE, x * sizeCelda + ajusteTextoCeldaX, y * sizeCelda + ajusteTextoCeldaY);
+                    }
+                    case PEÑON -> {
+                        g.setColor(Color.GRAY);
+                        g.drawString(PEÑON, x * sizeCelda + ajusteTextoCeldaX, y * sizeCelda + ajusteTextoCeldaY);
+                    }
+                    case ESPACIO -> {
+                        g.setColor(Color.BLACK);
+                        g.fillRect(x * sizeCelda, y * sizeCelda, sizeCelda, sizeCelda);
+                    }
+                }
+
+            }
+        }
+    }
+
+    protected void dibujarPersonaje(Graphics g) {
+        g.setColor(Color.BLACK);
+        g.drawString(ASTRONAUTA, player.getX() * sizeCelda + ajusteTextoCeldaX, player.getY() * sizeCelda + ajusteTextoCeldaY);
+    }
+
+    public void moverPersonaje(int dx, int dy) {
+        int newX = player.getX() + dx;
+        int newY = player.getY() + dy;
+        if (newX >= 0 && newX < Ancho && newY >= 0 && newY < Altura) {
+            player.movimiento(dx, dy);
+            actualizarMapa();
+            repaint();
+        }
+    }
+
+    public abstract String getNombreEscena();
+}
