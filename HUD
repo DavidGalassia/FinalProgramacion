@@ -1,0 +1,43 @@
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+
+public class HUD {
+    private Player player;
+    private Planta planta;
+
+    public HUD(Player player, Planta planta) {
+        this.player = player;
+        this.planta = planta;
+    }
+
+    public void draw(Graphics g) {
+        int barraAncho = 150; // Ancho de las barras
+        int barraAlto = 15;   // Alto de las barras
+
+        // Ajustar la fuente para el texto
+        g.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 10));
+
+        // Dibujar etiquetas y barras
+        drawBar(g, "Vida del Astronauta", Color.RED, player.getLife(), 5, 15, barraAncho, barraAlto);
+        drawBar(g, "Comida del Astronauta", Color.GREEN, player.getFood(), 5, 15 + 30, barraAncho, barraAlto);
+        drawBar(g, "Agua del Astronauta", Color.BLUE, player.getWater(), 5, 10 + 60, barraAncho, barraAlto);
+        drawBar(g, "Agua de la Planta", Color.CYAN, planta.getWater(), 5, 5 + 90, barraAncho, barraAlto);
+    }
+
+    private void drawBar(Graphics g, String label, Color color, int value, int x, int y, int width, int height) {
+        g.setColor(Color.BLACK);
+        g.drawString(label, x, y);
+        g.setColor(Color.WHITE);
+        g.fillRect(x, y , width, height); // Fondo de la barra
+        g.setColor(color);
+        g.fillRect(x, y , value * (width / 10), height); // Barra de progreso
+        g.setColor(Color.BLACK);
+        g.drawRect(x, y , width, height); // Borde de la barra
+    }
+
+    public void Escribir(Graphics g, String label){
+
+    }
+}
+
