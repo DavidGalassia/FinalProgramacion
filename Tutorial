@@ -1,0 +1,19 @@
+public class Tutorial extends Escena {
+
+    void iniciarMapeado() {
+        for (int y = 0; y < map.length; y++) {
+            for (int x = 0; x < map[y].length; x++) {
+                map[y][x] = ".";
+            }
+        }
+        map[5][5] = PEÑON;
+        map[5][10] = COMIDA;
+        map[10][5] = AGUA;
+        map[10][10] = COHETE;
+    }
+
+    public String getNombreEscena() {
+        return "Tutorial";
+    }
+
+}
